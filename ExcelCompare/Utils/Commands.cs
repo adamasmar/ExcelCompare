@@ -9,6 +9,8 @@ using OptionAttribute = ConsoleAppFramework.OptionAttribute;
 
 namespace ExcelCompare.Utils
 {
+
+    // sample change
     public class Commands : ConsoleAppBase
     {
         [Command("compare", "Cleanses and compares two Excel Files and returns their differences")]
