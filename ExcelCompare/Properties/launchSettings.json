@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ExcelCompare": {
+      "commandName": "Project",
+      "commandLineArgs": "compare -f1 \"C:\\Users\\adamasmar\\Downloads - Personal\\extract_code_test.xlsx\" -f2 \"C:\\Users\\adamasmar\\Downloads - Personal\\extract_code_test - Copy.xlsx\" -d false"
+    }
+  }
+}
