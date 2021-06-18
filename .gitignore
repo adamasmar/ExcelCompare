@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/ExcelCompare/Properties/ServiceDependencies/ExcelCompare20210617223605 - Web Deploy/profile.arm.json
+/ExcelCompare/Settings.job
