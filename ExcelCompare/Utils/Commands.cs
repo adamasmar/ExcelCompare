@@ -138,6 +138,7 @@ namespace ExcelCompare.Utils
                     dataView.Sort = $"{sheetColumn.ColumnName}, {absDifferenceColumn.ColumnName} desc";
                     var toPrintDataTable = dataView.ToTable();
                     Console.WriteLine("Creatng CSV file...");
+
                     toPrintDataTable.WriteToCsvFile(outputLocation);
                     Console.WriteLine($"File successfully written to {outputLocation}...");
                     if (Prompt.GetYesNo($"Success!! Found {counter} difference(s). Launch file now?",
