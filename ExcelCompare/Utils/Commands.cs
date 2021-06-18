@@ -16,11 +16,11 @@ namespace ExcelCompare.Utils
         [Command("compare", "Cleanses and compares two Excel Files and returns their differences")]
         public void Compare(
                 [Option("f1", "First Excel file path")] string file1Path = "",
-                [Option("f1rk", "First Excel file Key (leave default to use column 'A')")] string file1RowKey = "A",
-                [Option("f1ck", "First Excel file Key (leave default to use row 1)")] string file1ColumnKey = "1",
+                [Option("f1ck", "First Excel file column key (leave default to use column 'A')")] string file1RowKey = "A",
+                [Option("f1rk", "First Excel file row key (leave default to use row 1)")] string file1ColumnKey = "3",
                 [Option("f2", "Second Excel file path")] string file2Path = "",
-                [Option("f2rk", "Second Excel file Key (leave default to use column 'A')")] string file2RowKey = "A",
-                [Option("f2ck", "Second Excel file Key (leave default to use row 1)")] string file2ColumnKey = "1",
+                [Option("f2ck", "Second Excel file column key (leave default to use column 'A')")] string file2RowKey = "A",
+                [Option("f2rk", "Second Excel file row key (leave default to use row 1)")] string file2ColumnKey = "3",
                 [Option("o", "Specify output CSV results location (leave as default to output to current directory)")] string outputLocation = null
             )
         {
