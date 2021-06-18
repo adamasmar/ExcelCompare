@@ -36,7 +36,8 @@ namespace ExcelCompare.Utils
 
         private static bool IsExit(string text)
         {
-            if (text.Equals("x", StringComparison.InvariantCultureIgnoreCase) || text.Equals("exit", StringComparison.InvariantCultureIgnoreCase))
+            if (text.Equals("x", StringComparison.InvariantCultureIgnoreCase) || 
+                text.Equals("exit", StringComparison.InvariantCultureIgnoreCase))
             {
                 return true;
             }
@@ -44,10 +45,32 @@ namespace ExcelCompare.Utils
             return false;
         }
 
-        public static DataSet GetDataSet(string filePath, bool useDefaultIndexes)
+        private static bool IsNotValidColumnIndex(string userColumnIndex)
         {
-            var keyColumnIndex = GetExcelColumnLettersAsIndex("A");
-            var headerRowIndex = 1;
+            return userColumnIndex == null || string.IsNullOrWhiteSpace(userColumnIndex) ||
+                userColumnIndex.Any(char.IsDigit);
+        }
+
+        private static bool IsNotLocatedColumnIndex(int indexValue, DataTable dataTable)
+        {
+            return indexValue > dataTable.Columns.Count;
+        }
+
+        private static bool IsNotValidRowIndex(string rowIndex)
+        {
+            return rowIndex == null || string.IsNullOrWhiteSpace(rowIndex) ||
+                        !rowIndex.All(char.IsDigit);
+        }
+
+        private static bool IsNotLocatedRowIndex(string rowIndex, DataTable dataTable)
+        {
+            return Convert.ToInt32(rowIndex) > dataTable.Rows.Count;
+        }
+
+        public static DataSet GetDataSet(string filePath, string columnRowKey, string rowColumnKey)
+        {
+            //var keyColumnIndex = GetExcelColumnLettersAsIndex("A");
+            //var headerRowIndex = 1;
 
             using FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             using var reader = ExcelReaderFactory.CreateReader(stream);
@@ -58,7 +81,10 @@ namespace ExcelCompare.Utils
 
             foreach (DataTable table in result.Tables)
             {
-                if (!useDefaultIndexes)
+                int keyColumnIndex;
+                int headerRowIndex;
+
+                if (IsNotValidColumnIndex(columnRowKey) || IsNotLocatedColumnIndex(GetExcelColumnLettersAsIndex(columnRowKey), table))
                 {
                     var userProvidedColumnIndex = string.Empty;
 
@@ -73,7 +99,7 @@ namespace ExcelCompare.Utils
 
                         wrongPromptColumnText = "Invalid key COLUMN letters. ";
 
-                        if (userProvidedColumnIndex == null || string.IsNullOrWhiteSpace(userProvidedColumnIndex) || userProvidedColumnIndex.Any(char.IsDigit))
+                        if (IsNotValidColumnIndex(userProvidedColumnIndex))
                         {
                             continue;
                         }
@@ -86,7 +112,7 @@ namespace ExcelCompare.Utils
 
                         var indexValue = GetExcelColumnLettersAsIndex(userProvidedColumnIndex);
 
-                        if (indexValue > table.Columns.Count)
+                        if (IsNotLocatedColumnIndex(indexValue, table))
                         {
                             continue;
                         }
@@ -96,7 +122,14 @@ namespace ExcelCompare.Utils
                             break;
                         }
                     }
+                }
+                else
+                {
+                    keyColumnIndex = GetExcelColumnLettersAsIndex(columnRowKey);
+                }
 
+                if (IsNotValidRowIndex(rowColumnKey) || IsNotLocatedRowIndex(rowColumnKey, table))
+                {
                     var userProvidedRowIndex = string.Empty;
 
                     var promptRowText = $"Provide ROW key index for: '{Path.GetFileNameWithoutExtension(filePath)} | {table.TableName}', or type eXit to end:";
@@ -110,8 +143,7 @@ namespace ExcelCompare.Utils
 
                         wrongPromptRowText = "Invalid ROW. ";
 
-                        if (userProvidedRowIndex == null || string.IsNullOrWhiteSpace(userProvidedRowIndex) || 
-                            !userProvidedRowIndex.All(char.IsDigit))
+                        if (IsNotValidRowIndex(userProvidedRowIndex))
                         {
                             continue;
                         }
@@ -122,7 +154,7 @@ namespace ExcelCompare.Utils
                             return null;
                         }
 
-                        if (Convert.ToInt32(userProvidedRowIndex) > table.Rows.Count)
+                        if (IsNotLocatedRowIndex(userProvidedRowIndex, table))
                         {
                             continue;
                         }
@@ -132,6 +164,10 @@ namespace ExcelCompare.Utils
                             break;
                         }
                     }
+                }
+                else
+                {
+                    headerRowIndex = Convert.ToInt32(rowColumnKey) - 1;
                 }
 
                 if (keyColumnIndex > table.Columns.Count)
